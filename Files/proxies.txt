@@ -1,0 +1,10 @@
+45.142.28.83:8094:pmmcplhr:i9bxpjuwb8q1
+45.137.60.112:6640:pmmcplhr:i9bxpjuwb8q1
+45.140.13.124:9137:pmmcplhr:i9bxpjuwb8q1
+45.140.13.112:9125:pmmcplhr:i9bxpjuwb8q1
+45.142.28.20:8031:pmmcplhr:i9bxpjuwb8q1
+45.140.13.119:9132:pmmcplhr:i9bxpjuwb8q1
+45.142.28.145:8156:pmmcplhr:i9bxpjuwb8q1
+45.142.28.187:8198:pmmcplhr:i9bxpjuwb8q1
+176.116.230.128:7214:pmmcplhr:i9bxpjuwb8q1
+176.116.230.151:7237:pmmcplhr:i9bxpjuwb8q1

@@ -2,13 +2,29 @@ from bs4 import BeautifulSoup
 import requests
 import scrapper
 import json
+import random
 
+# getting correct format of proxies => http://username:password@ip-address:port
+proxy_pool = []
+with open('Files/proxies.txt', 'r') as f:
+    for proxy in f.readlines():
+        proxy = proxy.replace("\n", '')
+        proxy = proxy.split(":")
+        if len(proxy) == 4:
+            proxy_url = f"http://{proxy[2]}:{proxy[3]}@{proxy[0]}:{proxy[1]}"
+            proxy_pool.append(proxy_url)
+
+this_proxy = random.choice(proxy_pool)
+proxies = {
+    'http': this_proxy,
+    'https': this_proxy,
+}
 def getTotalNumberOfRecords():
     """
     This is the function retrieves the total number of pages .
     """
     try:
-        html_text=requests.get('https://www.gov.uk/employment-tribunal-decisions?tribunal_decision_categories%5B%5D=age-discrimination&tribunal_decision_categories%5B%5D=disability-discrimination&tribunal_decision_categories%5B%5D=harassment&tribunal_decision_categories%5B%5D=parental-and-maternity-leave&tribunal_decision_categories%5B%5D=race-discrimination&tribunal_decision_categories%5B%5D=religion-or-belief-discrimination&tribunal_decision_categories%5B%5D=sex-discrimination&tribunal_decision_categories%5B%5D=sexual-orientation-discrimination-transexualism&tribunal_decision_categories%5B%5D=victimisation-discrimination').text
+        html_text=requests.get(url='https://www.gov.uk/employment-tribunal-decisions?tribunal_decision_categories%5B%5D=age-discrimination&tribunal_decision_categories%5B%5D=disability-discrimination&tribunal_decision_categories%5B%5D=harassment&tribunal_decision_categories%5B%5D=parental-and-maternity-leave&tribunal_decision_categories%5B%5D=race-discrimination&tribunal_decision_categories%5B%5D=religion-or-belief-discrimination&tribunal_decision_categories%5B%5D=sex-discrimination&tribunal_decision_categories%5B%5D=sexual-orientation-discrimination-transexualism&tribunal_decision_categories%5B%5D=victimisation-discrimination',proxies=proxies,timeout=5).text
         soup =BeautifulSoup(html_text,'lxml')
         totalNoOfResult = int(soup.find('span',class_ = 'gem-c-pagination__link-label').text.split("of")[1])
         print(f"total number of results: {totalNoOfResult}")
@@ -31,7 +47,7 @@ def getEmploymentTribunalDecision():
         for page in range(getTotalNumberOfRecords()):
             page_no=page + 1
             print(f"Retrieving page: {page_no}")
-            html_text=requests.get('https://www.gov.uk/employment-tribunal-decisions?page='+str(page_no)+'&tribunal_decision_categories%5B%5D=age-discrimination&tribunal_decision_categories%5B%5D=disability-discrimination&tribunal_decision_categories%5B%5D=harassment&tribunal_decision_categories%5B%5D=parental-and-maternity-leave&tribunal_decision_categories%5B%5D=race-discrimination&tribunal_decision_categories%5B%5D=religion-or-belief-discrimination&tribunal_decision_categories%5B%5D=sex-discrimination&tribunal_decision_categories%5B%5D=sexual-orientation-discrimination-transexualism&tribunal_decision_categories%5B%5D=victimisation-discrimination').text
+            html_text=requests.get(url='https://www.gov.uk/employment-tribunal-decisions?page='+str(page_no)+'&tribunal_decision_categories%5B%5D=age-discrimination&tribunal_decision_categories%5B%5D=disability-discrimination&tribunal_decision_categories%5B%5D=harassment&tribunal_decision_categories%5B%5D=parental-and-maternity-leave&tribunal_decision_categories%5B%5D=race-discrimination&tribunal_decision_categories%5B%5D=religion-or-belief-discrimination&tribunal_decision_categories%5B%5D=sex-discrimination&tribunal_decision_categories%5B%5D=sexual-orientation-discrimination-transexualism&tribunal_decision_categories%5B%5D=victimisation-discrimination',proxies=proxies,timeout=5).text
             soup =BeautifulSoup(html_text,'lxml')
             
             jobs = soup.find_all('li',class_= 'gem-c-document-list__item')
