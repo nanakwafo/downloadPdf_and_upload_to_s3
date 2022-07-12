@@ -1,3 +1,5 @@
 PyPDF2
 requests
 boto3
+BeautifulSoup4
+mysql-connector-python
