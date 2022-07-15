@@ -43,8 +43,19 @@ def UploadToS3(file_name, bucket, object_name=None, args=None):
         object_name = file_name
 
     s3_client.upload_file(file_name, bucket, object_name, ExtraArgs=args)
+    set_object_access_policy(file_name)
         
-
+def set_object_access_policy(object_key):
+    """
+    This function adds ACL policy for object in S3 bucket.
+    :return: None
+    """
+    s3_client = boto3.client("s3")
+    bucket_name = "pdfscrapper"
+    object_key = object_key
+    response = s3_client.put_object_acl(
+        ACL="public-read", Bucket=bucket_name, Key=object_key
+    )
 def createS3Bucket():
 
     resource = boto3.resource("s3", region_name="us-east-2")
