@@ -59,7 +59,7 @@ def createS3Bucket():
 
     print("Amazon S3 bucket has been created")
 
-def update_db_result_after_scrapping(judgment_title, stagecoach_manchester,judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names):
+def update_db_result_after_scrapping(judgment_title, judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names):
     """
     insert results into database
     """
@@ -69,11 +69,79 @@ def update_db_result_after_scrapping(judgment_title, stagecoach_manchester,judgm
       password="",
       database="pdf_parser" 
     )
-
+    
     mycursor = mydb.cursor()
 
-    sql = "INSERT INTO employment_tribunal_decisions (judgment_title, stagecoach_manchester,judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)"
-    values = (judgment_title, stagecoach_manchester,judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names)
+    sql = "INSERT INTO employment_tribunal_decisions (judgment_title,judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)"
+    values = (judgment_title,judgment_type,decision_from,published,country,jurishdiction_code,employment_tribunal_decisions,decision_date,pdfurls,pdf_names)
+
+    mycursor.execute(sql,values)
+
+    mydb.commit()
+
+def getcurrentpage():
+    """
+    get current page from database
+    """
+    page = None
+    
+    mydb = mysql.connector.connect(
+      host="127.0.0.1",
+      user="newuser",
+      password="",
+      database="pdf_parser" 
+    )
+    mycursor = mydb.cursor()
+
+    sql = "select current_page FROM pages limit 1"
+
+    mycursor.execute(sql)
+
+    myresult = mycursor.fetchall()
+
+    for x in list(myresult[0]):
+       page = x.replace("[", "").replace("]", "").replace("\"","").split(",")
+    return page
+
+def getremainingPage():
+    """
+    get current page from database
+    """
+    page = None
+    
+    mydb = mysql.connector.connect(
+      host="127.0.0.1",
+      user="newuser",
+      password="",
+      database="pdf_parser" 
+    )
+    mycursor = mydb.cursor()
+
+    sql = "select remaining_page FROM pages limit 1"
+
+    mycursor.execute(sql)
+
+    myresult = mycursor.fetchall()
+
+    for x in list(myresult[0]):
+       page = x.replace("[", "").replace("]", "").replace("\"","").split(",")
+    return page 
+
+def update_page_values(current_page,remaining_page):
+    """
+    insert data in database
+    """
+    mydb = mysql.connector.connect(
+      host="127.0.0.1",
+      user="newuser",
+      password="",
+      database="pdf_parser" 
+    )
+    mycursor = mydb.cursor()
+
+    sql = """UPDATE pages SET  current_page = %s,remaining_page= %s WHERE id = 1"""
+
+    values = (current_page,remaining_page)
 
     mycursor.execute(sql,values)
 
