@@ -51,9 +51,12 @@ def getEmploymentTribunalDecision(currentPages):
     """
     This  function retrieves  all records including the paginated results on the tribunal decision page .
     """
+    totalNoOfPages = len(currentPages)
+    totalNoOfPagesCount = 0
     try:
         for page in currentPages:
-            
+            scrapper.update_page_status('progress')
+            totalNoOfPagesCount= totalNoOfPagesCount +1
             page_no=page 
             print(f"Retrieving page: {page_no}")
             url='https://www.gov.uk/employment-tribunal-decisions?page='+str(page_no)+'&tribunal_decision_categories%5B%5D=age-discrimination&tribunal_decision_categories%5B%5D=disability-discrimination&tribunal_decision_categories%5B%5D=harassment&tribunal_decision_categories%5B%5D=parental-and-maternity-leave&tribunal_decision_categories%5B%5D=race-discrimination&tribunal_decision_categories%5B%5D=religion-or-belief-discrimination&tribunal_decision_categories%5B%5D=sex-discrimination&tribunal_decision_categories%5B%5D=sexual-orientation-discrimination-transexualism&tribunal_decision_categories%5B%5D=victimisation-discrimination'
@@ -65,6 +68,9 @@ def getEmploymentTribunalDecision(currentPages):
                 link =job.find('a')['href']
                 print(f"retrieving PDF on : {link}")
                 getPDFpages('https://www.gov.uk'+link.strip())
+            
+            if totalNoOfPagesCount == totalNoOfPages:
+                scrapper.update_page_status('finish')
     except requests.exceptions.HTTPError as err:
         print ("Error",err)
     except requests.exceptions.Timeout:
@@ -158,7 +164,7 @@ if __name__ == '__main__':
     currentPages =[x.strip() for x in currentPages if x.strip()]
     remainingpages =[x.strip() for x in remainingpages if x.strip()] 
     
-    currentPages = remainingpages[:20]
+    currentPages = remainingpages[:1]
     remainingpages =[item for item in remainingpages if item not in currentPages]
     scrapper.update_page_values(json.dumps(currentPages),json.dumps(remainingpages))
 
@@ -168,13 +174,13 @@ if __name__ == '__main__':
         remainingpages =[]
         for i in range(totalNoOfResult):
             remainingpages.append(i +1)
-        currentPages = remainingpages[:20]
+        currentPages = remainingpages[:1]
         remainingpages =[item for item in remainingpages if item not in currentPages]
         scrapper.update_page_values(json.dumps(currentPages),json.dumps(remainingpages))
 
     
-    
-    getEmploymentTribunalDecision(currentPages)
+    if scrapper.getstatusPage()[0] == "finish":
+        getEmploymentTribunalDecision(currentPages)
     
    
     
