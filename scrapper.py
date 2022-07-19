@@ -76,8 +76,8 @@ def update_db_result_after_scrapping(judgment_title, judgment_type,decision_from
     """
     mydb = mysql.connector.connect(
       host="127.0.0.1",
-      user="newuser",
-      password="",
+      user="root",
+      password="password",
       database="pdf_parser" 
     )
     
@@ -98,8 +98,8 @@ def getcurrentpage():
     
     mydb = mysql.connector.connect(
       host="127.0.0.1",
-      user="newuser",
-      password="",
+      user="root",
+      password="password",
       database="pdf_parser" 
     )
     mycursor = mydb.cursor()
@@ -122,8 +122,8 @@ def getremainingPage():
     
     mydb = mysql.connector.connect(
       host="127.0.0.1",
-      user="newuser",
-      password="",
+      user="root",
+      password="password",
       database="pdf_parser" 
     )
     mycursor = mydb.cursor()
@@ -144,8 +144,8 @@ def update_page_values(current_page,remaining_page):
     """
     mydb = mysql.connector.connect(
       host="127.0.0.1",
-      user="newuser",
-      password="",
+      user="root",
+      password="password",
       database="pdf_parser" 
     )
     mycursor = mydb.cursor()
@@ -157,6 +157,51 @@ def update_page_values(current_page,remaining_page):
     mycursor.execute(sql,values)
 
     mydb.commit()
+
+def update_page_status(status):
+    """
+    insert data in database
+    """
+    mydb = mysql.connector.connect(
+      host="127.0.0.1",
+      user="root",
+      password="password",
+      database="pdf_parser" 
+    )
+    mycursor = mydb.cursor()
+
+    sql = """UPDATE pages SET  status = %s WHERE id = 1"""
+
+    values = (status)
+
+    mycursor.execute(sql,(values,))
+
+    mydb.commit()
+
+def getstatusPage():
+    """
+    get current page from database
+    """
+    status = None
+    
+    mydb = mysql.connector.connect(
+      host="127.0.0.1",
+      user="root",
+      password="password",
+      database="pdf_parser" 
+    )
+    mycursor = mydb.cursor()
+
+    sql = "select status FROM pages limit 1"
+
+    mycursor.execute(sql)
+
+    myresult = mycursor.fetchall()
+
+    for x in list(myresult[0]):
+       status = x.replace("[", "").replace("]", "").replace("\"","").split(",")
+    return status
+
 def scrapper_main(pdfName,url):
     decidetosavepdf(pdfName,url,extractPDFContent(url))
 
